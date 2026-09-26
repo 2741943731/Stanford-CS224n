@@ -1,0 +1,30 @@
+# ---- macOS ----
+.DS_Store
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+*.egg-info/
+
+# ---- Secrets / environments ----
+.env
+.venv/
+venv/
+
+# ---- Large datasets and training artifacts (regenerable, not source) ----
+cs224n-A2/data/en-cw.txt
+cs224n-A2/data/train.conll
+cs224n-A2/data/train.gold.conll
+cs224n-A2/results/
+cs224n-A3/datasets/*.pt
+cs224n-gpt2/data/quora-*.csv
+cs224n-gpt2/out/
+*.pt
+*.pkl
+*.weights
+
+# ---- Editors ----
+.vscode/
+.idea/
