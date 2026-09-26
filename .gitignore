@@ -23,7 +23,8 @@ cs224n-gpt2/data/quora-*.csv
 cs224n-gpt2/out/
 *.pt
 *.pkl
-*.weights
+*.weightsß
+*.pdf
 
 # ---- Editors ----
 .vscode/

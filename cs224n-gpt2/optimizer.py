@@ -61,7 +61,27 @@ class AdamW(Optimizer):
                 ###
                 ###       Refer to the default project handout for more details.
                 ### YOUR CODE HERE
-                raise NotImplementedError
+                # raise NotImplementedError
 
+                if(len(state) == 0):
+                    state["t"] = 0 
+                    state["m"] = torch.zeros_like(p.data)
+                    state["v"] = torch.zeros_like(p.data)
+                beta1, beta2 = group["betas"]
+                state["t"] += 1
+                state["m"].mul_(beta1).add_(grad, alpha=1 - beta1)
+                state["v"].mul_(beta2).addcmul_(grad, grad, value=1 - beta2)
+                if group["correct_bias"]:
+                    bias1 = 1 - beta1 ** state["t"]
+                    bias2 = 1 - beta2 ** state["t"]
+                    step_size = alpha * math.sqrt(bias2) / bias1
+                else:
+                    step_size = alpha
+
+                demon = state["v"].sqrt().add_(group["eps"])
+                p.data.addcdiv_(state["m"], demon, value=-step_size)
+
+                if group["weight_decay"] != 0:
+                    p.data.add_(p.data, alpha=-alpha*group["weight_decay"])
 
         return loss
