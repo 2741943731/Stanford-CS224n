@@ -32,6 +32,9 @@ from models.gpt2 import GPT2Model
 
 from optimizer import AdamW
 
+from modules.lora import LoRALinear
+from modules.lora import apply_lora 
+
 TQDM_DISABLE = False
 
 # Fix the random seed.
@@ -110,6 +113,7 @@ def train(args):
 
   args = add_arguments(args)
   model = ParaphraseGPT(args)
+  apply_lora(model, r=args.lora_r, alpha=args.lora_alpha, lora_dropout=args.lora_dropout, target_modules=args.lora_target_modules)
   model = model.to(device)
 
   lr = args.lr
@@ -157,6 +161,7 @@ def test(args):
   saved = torch.load(args.filepath)
 
   model = ParaphraseGPT(saved['args'])
+  apply_lora(model, r=saved['args'].lora_r, alpha=saved['args'].lora_alpha, lora_dropout=saved['args'].lora_dropout, target_modules=saved['args'].lora_target_modules)
   model.load_state_dict(saved['model'])
   model = model.to(device)
   model.eval()
@@ -206,7 +211,10 @@ def get_args():
   parser.add_argument("--model_size", type=str,
                       help="The model size as specified on hugging face. DO NOT use the xl model.",
                       choices=['gpt2', 'gpt2-medium', 'gpt2-large'], default='gpt2')
-
+  parser.add_argument("--lora_r", type=int, help="LoRA rank", default=8)
+  parser.add_argument("--lora_alpha", type=int, help="LoRA alpha", default=16)
+  parser.add_argument("--lora_dropout", type=float, help="LoRA dropout", default=0.0)
+  parser.add_argument("--lora_target_modules", type=str, nargs='+', help="LoRA target modules", default=['query', 'value'])
   args = parser.parse_args()
   return args
 
